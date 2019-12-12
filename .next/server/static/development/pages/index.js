@@ -88,7 +88,7 @@ module.exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -226,7 +226,7 @@ class GraphComponent extends react__WEBPACK_IMPORTED_MODULE_7__["Component"] {
       // style[mxConstants.STYLE_SPACING_BOTTOM] = '2';
 
       style[mxConstants.STYLE_MOVABLE] = '1';
-      style[mxConstants.STYLE_FONTSIZE] = '20';
+      style[mxConstants.STYLE_FONTSIZE] = '28';
       style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
       style[mxConstants.STYLE_FONTFAMILY] = 'Arial';
       return style;
@@ -2833,7 +2833,7 @@ class Index extends react__WEBPACK_IMPORTED_MODULE_3__["Component"] {
 
 /***/ }),
 
-/***/ 3:
+/***/ 4:
 /*!******************************!*\
   !*** multi ./pages/index.js ***!
   \******************************/

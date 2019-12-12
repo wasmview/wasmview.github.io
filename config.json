@@ -1,4 +1,6 @@
 {
     "node_server_port": 4000,
-    "time_to_wait": 30
+    "time_to_wait": 30,
+    "output_folder": "./Output",
+    "number_of_screenshots": 5
 }

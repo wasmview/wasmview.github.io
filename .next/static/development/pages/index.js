@@ -161,7 +161,7 @@ function (_Component) {
         // style[mxConstants.STYLE_SPACING_BOTTOM] = '2';
 
         style[mxConstants.STYLE_MOVABLE] = '1';
-        style[mxConstants.STYLE_FONTSIZE] = '20';
+        style[mxConstants.STYLE_FONTSIZE] = '28';
         style[mxConstants.STYLE_FONTSTYLE] = mxConstants.FONT_BOLD;
         style[mxConstants.STYLE_FONTFAMILY] = 'Arial';
         return style;
@@ -18765,7 +18765,7 @@ function (_Component) {
 
 /***/ }),
 
-/***/ 1:
+/***/ 2:
 /*!**********************************************************************************************************!*\
   !*** multi next-client-pages-loader?page=%2F&absolutePagePath=D%3A%5CWork%5CWasmView%5Cpages%5Cindex.js ***!
   \**********************************************************************************************************/
@@ -18788,5 +18788,5 @@ module.exports = dll_9aaf654d4f8f592c0a05;
 
 /***/ })
 
-},[[1,"static/runtime/webpack.js","styles"]]]);
+},[[2,"static/runtime/webpack.js","styles"]]]);
 //# sourceMappingURL=index.js.map

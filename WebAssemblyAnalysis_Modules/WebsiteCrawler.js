@@ -3,18 +3,24 @@ const {
     promisify
 } = require('util');
 
+const mkdir = promisify(fs.mkdir);
+const writeFile = promisify(fs.writeFile);
 const puppeteer = require('puppeteer');
 const path = require('path');
 
+const uuidv1 = require('uuid/v1');
 
 const CONFIG = require('../config.json');
 const TIME_TO_WAIT = CONFIG.time_to_wait;
+const NUM_SCREENSHOTS = CONFIG.number_of_screenshots;
+const OUTPUT_DIRECTORY = CONFIG.output_folder;
 
 const dev = process.env.NODE_ENV !== 'production'
 
 const preloadFile = fs.readFileSync(path.join(__dirname, './instrumentationCode.js'), 'utf8');
 // const binaryenJSFile = fs.readFileSync(path.join(__dirname, './binaryen.js'), 'utf8');
 const wabtJSFile = fs.readFileSync(path.join(__dirname, './wabt.js'), 'utf8');
+
 
 class Queue {
     // Retrieved from : https://www.geeksforgeeks.org/implementation-queue-javascript/
@@ -60,6 +66,10 @@ class Crawler {
         this.browser = null;
     }
 
+    cleanDomain(domain){
+        return domain.replace(/\//g, '__').replace(/:/g, '').replace(/\./g, '___').slice(0, 50);
+    }
+
     formatStackTrace(stackTrace, wasmDebugFunctionNames = null) {
         let stackTraceFrames = stackTrace.replace('Error\n ', '')
             .replace(/Object\./g, '')
@@ -87,8 +97,9 @@ class Crawler {
 
                     if(frameRegexResult != null){
                         const functionIndex = frameRegexResult[1];
-                        const realName = wasmDebugFunctionNames[functionIndex].replace('$','');
+                        let realName = wasmDebugFunctionNames[functionIndex]
                         if (realName != null) {
+                            realName = realName.replace('$','');
                             frame = `wasm-function___${realName}`;
                         }
                     }
@@ -181,6 +192,15 @@ class Crawler {
             let webAssemblyWorkers = [];
             let allRecordedWorkers = [];
 
+            const cleanedURL = this.cleanDomain(domain);
+            const outputDomainDirectoryName = `${cleanedURL}-${uuidv1().substring(0,11)}`;
+            const resolvedOutputPath = path.resolve(OUTPUT_DIRECTORY, outputDomainDirectoryName)
+            try{
+                await mkdir(resolvedOutputPath);
+            } catch(e){
+                console.error(e);
+            }
+
             const pagesToVisit = new Queue();
             pagesToVisit.enqueue([domain, 1]);
 
@@ -239,7 +259,21 @@ class Crawler {
                         waitUntil: 'load'
                     });
 
-                    await page.waitFor(TIME_TO_WAIT * 1000);
+
+                    const timeIntervalToWaitBetweenShots = Math.floor((TIME_TO_WAIT - 1) / NUM_SCREENSHOTS);
+                    for(let i = 1; i <= NUM_SCREENSHOTS; i++ ){
+                        try{
+                            const screenshotOutputPath = path.resolve(resolvedOutputPath,`Screenshot_${i}.png`);
+                            await page.screenshot({
+                                path: screenshotOutputPath,
+                                fullPage: false
+                            })
+                            await page.waitFor(timeIntervalToWaitBetweenShots * 1000);
+                        } catch(screenshotErr){
+                            console.error(screenshotErr)
+                        }
+                    }
+
                     try {
 
                         try {
@@ -283,6 +317,12 @@ class Crawler {
                                 domain: domain,
                                 possibleWrapperFiles: requestsForPage,
                                 graphDetails: graphDetails
+                            }
+
+                            try{
+                                writeFile(path.resolve(resolvedOutputPath, 'logs.json'), JSON.stringify(graphDetails));
+                            } catch(writeLogError){
+                                console.error(writeLogError);
                             }
                         }
                     } catch (crawlErr) {

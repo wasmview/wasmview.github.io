@@ -98,7 +98,7 @@ export default class GraphComponent extends Component {
             // style[mxConstants.STYLE_SPACING_TOP] = '2';
             // style[mxConstants.STYLE_SPACING_BOTTOM] = '2';
             style[mxConstants.STYLE_MOVABLE] = '1';
-            style[mxConstants.STYLE_FONTSIZE]= '20';
+            style[mxConstants.STYLE_FONTSIZE]= '28';
             style[mxConstants.STYLE_FONTSTYLE]= mxConstants.FONT_BOLD;
             style[mxConstants.STYLE_FONTFAMILY] = 'Arial';
             return style
