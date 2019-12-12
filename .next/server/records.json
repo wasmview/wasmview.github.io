@@ -1,0 +1,35 @@
+{
+  "modules": {
+    "byIdentifier": {
+      "multi private-next-pages/_app.js": 0,
+      "multi private-next-pages/_document.js": 1,
+      "multi private-next-pages/index.js": 2,
+      "multi next/dist/pages/_error": 3
+    },
+    "usedIds": {
+      "0": 0,
+      "1": 1,
+      "2": 2,
+      "3": 3
+    }
+  },
+  "chunks": {
+    "byName": {
+      "init-server.js": 0,
+      "on-error-server.js": 1,
+      "static\\4K8dD4if14Xkiz0KcVcvt\\pages\\_app.js": 2,
+      "static\\4K8dD4if14Xkiz0KcVcvt\\pages\\_document.js": 3,
+      "static\\4K8dD4if14Xkiz0KcVcvt\\pages\\_error.js": 4,
+      "static\\4K8dD4if14Xkiz0KcVcvt\\pages\\index.js": 5
+    },
+    "bySource": {},
+    "usedIds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

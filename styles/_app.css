@@ -1,0 +1,13 @@
+.colored-background{
+    background: linear-gradient(135deg, rgba(74,47,246,1) 0%, rgba(101,79,239,1) 42%, rgba(126,108,238,1) 64%, rgba(164,154,224,1) 100%, rgba(255,255,255,1) 100%);
+    color: white;
+    box-shadow: inset 0px -11px 8px -13px rgba(0,0,0,0.75);
+}
+span.navbar-brand, .nav-link {
+    color: white;
+}
+
+.btn-primary{
+    background-color: #478DED;
+    border-color: #478DED;
+}
