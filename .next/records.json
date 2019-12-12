@@ -1,5 +1,5 @@
 {
-  "mini-css-extract-plugin node_modules/css-loader/index.js??ref--5-1!styles/_app.css": [
+  "mini-css-extract-plugin node_modules/css-loader/index.js??ref--5-1!styles/index.css": [
     {
       "modules": {
         "byIdentifier": {},
@@ -16,7 +16,7 @@
       }
     }
   ],
-  "mini-css-extract-plugin node_modules/css-loader/index.js??ref--5-1!styles/index.css": [
+  "mini-css-extract-plugin node_modules/css-loader/index.js??ref--5-1!styles/_app.css": [
     {
       "modules": {
         "byIdentifier": {},
@@ -50,9 +50,9 @@
       "styles": 2,
       "static/runtime/main.js": 3,
       "static/runtime/polyfills.js": 4,
-      "static\\JLubGAMNIL2sxr8aVDYR7\\pages\\_app.js": 5,
-      "static\\JLubGAMNIL2sxr8aVDYR7\\pages\\_error.js": 6,
-      "static\\JLubGAMNIL2sxr8aVDYR7\\pages\\index.js": 7
+      "static\\S8up5_5VlK297vtDb4F9w\\pages\\_app.js": 5,
+      "static\\S8up5_5VlK297vtDb4F9w\\pages\\_error.js": 6,
+      "static\\S8up5_5VlK297vtDb4F9w\\pages\\index.js": 7
     },
     "bySource": {},
     "usedIds": [
