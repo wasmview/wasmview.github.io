@@ -166,6 +166,10 @@ class Crawler {
     }
 
     formatInstrumentObject(webassemblyObject) {
+
+        if(webassemblyObject == null){
+            return;
+        }
         this.formatInstrumentFileObject(webassemblyObject);
 
         const wasmFileHashes = Object.keys(webassemblyObject.WasmFiles);
@@ -268,6 +272,48 @@ class Crawler {
                                 path: screenshotOutputPath,
                                 fullPage: false
                             })
+
+                            
+
+                            try {
+                                const windowCallsJSHandle = await page.evaluateHandle(() => window.WebAssemblyCallLocations)
+                                windowWebAssemblyHandle = await windowCallsJSHandle.jsonValue();
+                                this.formatInstrumentObject(windowWebAssemblyHandle);
+                            } catch(windowHandleError) {
+                                console.error(windowHandleError);
+                            }
+    
+    
+    
+                            if (webAssemblyWorkers.length > 0) {
+                                const workerWebAssemblyJson = await Promise.all(webAssemblyWorkers.map(async x => {
+                                    try {
+                                        let workerObject = await x.jsonValue();
+                                        this.formatInstrumentObject(workerObject);
+                                        return workerObject;
+                                    } catch (err) {
+                                        return null
+                                    }
+                                }, this));
+                                allRecordedWorkers.push(...workerWebAssemblyJson)
+                                allRecordedWorkers = allRecordedWorkers.filter(x => x != null)
+                            }
+
+                            const logDetails = {
+                                window: windowWebAssemblyHandle,
+                                workers: allRecordedWorkers
+                            }
+
+                            try{
+                                writeFile(path.resolve(resolvedOutputPath, `log_${i}.json`), JSON.stringify(logDetails));
+                            } catch(writeLogError){
+                                console.error(writeLogError);
+                            }
+
+                            windowWebAssemblyHandle = null;
+                            allRecordedWorkers = [];
+
+
                             await page.waitFor(timeIntervalToWaitBetweenShots * 1000);
                         } catch(screenshotErr){
                             console.error(screenshotErr)
@@ -277,10 +323,11 @@ class Crawler {
                     try {
 
                         try {
-                            windowWebAssemblyHandle = await (await page.evaluateHandle(() => window.WebAssemblyCallLocations)).jsonValue();
+                            const windowCallsJSHandle = await page.evaluateHandle(() => window.WebAssemblyCallLocations)
+                            windowWebAssemblyHandle = await windowCallsJSHandle.jsonValue();
                             this.formatInstrumentObject(windowWebAssemblyHandle);
-                        } finally {
-
+                        } catch(windowHandleError) {
+                            console.error(windowHandleError);
                         }
 
 
@@ -358,7 +405,10 @@ class Crawler {
         }
         this.browser = await puppeteer.launch({
             devtools: true,
-            dumpio: dev,
+            // dumpio: dev,
+            args:[
+            ]
+
         });
     }
 

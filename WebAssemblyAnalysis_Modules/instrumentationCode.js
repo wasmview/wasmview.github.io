@@ -248,7 +248,7 @@ WebAssembly.instantiate = function (buff, imp) {
                     newImports[key][name] = (function () {
                         const na = name;
                         const wasmHashStr = wasmHashString;
-                        self.WebAssemblyCallLocations.altered = true;
+
                         return function () {
                             let frames = new Error().stack;
                             self.WebAssemblyCallLocations.addImport(na,frames)
@@ -261,6 +261,7 @@ WebAssembly.instantiate = function (buff, imp) {
                     newImports[key][name] = keyObject[name];
                 }
             }
+
         }
     
 
@@ -268,7 +269,6 @@ WebAssembly.instantiate = function (buff, imp) {
         //Call the original .instantiate function to get the Result Object 
         return ogWaI(buff, newImports)
             .then(function (re) {
-
                 //Depending on whether * buff * param was bytes or a Module,
                 //return of .instantiate can be either the Instance or a ResultObject
                 //containing a Module and Instance
@@ -286,13 +286,13 @@ WebAssembly.instantiate = function (buff, imp) {
                     for (const name of exportNames) {
                         const ogFunction = re.exports[name];
     
-                        if(typeof(re.exports[name]) == 'function'){
+                        if(typeof(re.exports[name]) == 'function' ){
                             //Define a closure function to record which file and function was called
                             newInstance.exports[name] = (function () {
                                 const na = name;
+ 
                                 const wasmHashStr = wasmHashString;
 
-                                self.WebAssemblyCallLocations.altered = true;
                                 const closureReturn = function () {
                                     let frames = new Error().stack;
                                     self.WebAssemblyCallLocations.addExport(na,frames)   
@@ -331,25 +331,31 @@ WebAssembly.instantiate = function (buff, imp) {
                     //Instrument export functions
                     const exportNames = Object.keys(re.instance.exports);
                     for (const name of exportNames) {
-                        const ogFunction = re.instance.exports[name];
-    
-                        //Define a closure function to record which file and function was called
-                        newInstance.exports[name] = (function () {
-                            const na = name;
-                            const wasmHashStr = wasmHashString;
+                        if(typeof(re.instance.exports[name]) == 'function' ){
 
-                            const closureReturn = function () {
-                                let frames = new Error().stack;
-                                self.WebAssemblyCallLocations.addExport(na,frames)   
-                                self.WebAssemblyCallLocations.WasmFiles[wasmHashStr].addExport(na,frames)   
+                            const ogFunction = re.instance.exports[name];
+                            //Define a closure function to record which file and function was called
+                            newInstance.exports[name] = (function () {
+                                const na = name;
+                                const wasmHashStr = wasmHashString;
 
-                                return ogFunction.apply(this, arguments);
-                            };
-                            Object.defineProperty(closureReturn, "length", { value: ogFunction.length })
 
-                            return closureReturn;
-                        })()
-                    };
+                                const closureReturn = function () {
+                                    let frames = new Error().stack;
+                                    self.WebAssemblyCallLocations.addExport(na,frames)   
+                                    self.WebAssemblyCallLocations.WasmFiles[wasmHashStr].addExport(na,frames)   
+
+                                    return ogFunction.apply(this, arguments);
+                                };
+                                Object.defineProperty(closureReturn, "length", { value: ogFunction.length })
+
+                                return closureReturn;
+                            })()
+
+                        }else {
+                            newInstance.exports[name] = re.instance.exports[name];
+                        }
+                    }
     
                     Object.setPrototypeOf(newInstance, WebAssembly.Instance)
                     newResultObject.instance = newInstance;
@@ -398,7 +404,7 @@ WebAssembly.instantiateStreaming = function (source, imp) {
                         newImports[key] = keyObject;
                     }
                     for(const name in keyObject){
-                        if(typeof(keyObject[name]) === 'function'){
+                        if(typeof(keyObject[name]) === 'function' ){
                             const originalImportFunction = keyObject[name];
             
                             newImports[key][name] = (function () {
@@ -418,7 +424,7 @@ WebAssembly.instantiateStreaming = function (source, imp) {
                     }
                 }
             
-                return ogWaIS(source, newImports)
+                return ogWaI(arrayBuffer, newImports)
                     .then(function (re) {
                         const newResultObject = {
                             module: re.module,
@@ -431,22 +437,26 @@ WebAssembly.instantiateStreaming = function (source, imp) {
                         const exportNames = Object.keys(re.instance.exports);
             
                         for (const name of exportNames) {
-                            const ogFunction = re.instance.exports[name];
-            
-                            newInstance.exports[name] = (function () {
-                                const na = name;
-                                const wasmHashStr = wasmHashString;
 
-                                const closureReturn = function () {
-                                    let frames = new Error().stack;
-                                    self.WebAssemblyCallLocations.addExport(na,frames)   
-                                    self.WebAssemblyCallLocations.WasmFiles[wasmHashStr].addExport(na,frames)
-                                    return ogFunction.apply(this, arguments);
-                                };
-                                Object.defineProperty(closureReturn, "length", { value: ogFunction.length })
-            
-                                return closureReturn;
-                            })()
+                            if(typeof(re.instance.exports[name]) == 'function' ){
+
+                                const ogFunction = re.instance.exports[name];
+                
+                                newInstance.exports[name] = (function () {
+                                    const na = name;
+                                    const wasmHashStr = wasmHashString;
+
+                                    const closureReturn = function () {
+                                        let frames = new Error().stack;
+                                        self.WebAssemblyCallLocations.addExport(na,frames)   
+                                        self.WebAssemblyCallLocations.WasmFiles[wasmHashStr].addExport(na,frames)
+                                        return ogFunction.apply(this, arguments);
+                                    };
+                                    Object.defineProperty(closureReturn, "length", { value: ogFunction.length })
+                
+                                    return closureReturn;
+                                })()
+                            }
                         };
             
                         newResultObject.instance = newInstance;
@@ -457,3 +467,15 @@ WebAssembly.instantiateStreaming = function (source, imp) {
     });
 
 };
+
+console.log(`
+
+__        __               __     ___               
+\\ \\      / /_ _ ___ _ __ __\\ \\   / (_) _____      __
+ \\ \\ /\\ / / _\` / __| '_ \` _ \\ \\ / /| |/ _ \\ \\ /\\ / /
+  \\ V  V / (_| \\__ \\ | | | | \\ V / | |  __/\\ V  V / 
+   \\_/\\_/ \\__,_|___/_| |_| |_|\\_/  |_|\\___| \\_/\\_/  
+                                                    
+
+`)
+console.log('WebAssembly instrumented!')
