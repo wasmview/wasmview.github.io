@@ -22,7 +22,7 @@
     "cors": "^2.8.5",
     "cross-env": "^6.0.3",
     "express": "^4.17.1",
-    "express-handlebars": "^3.1.0",
+    "express-handlebars": "^5.3.1",
     "next": "^9.0.0",
     "puppeteer": "^1.18.1",
     "rc-progress": "^2.5.1",
