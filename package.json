@@ -21,7 +21,7 @@
     "bootstrap": "^4.3.1",
     "cors": "^2.8.5",
     "cross-env": "^6.0.3",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-handlebars": "^3.1.0",
     "next": "^9.0.0",
     "puppeteer": "^1.18.1",
